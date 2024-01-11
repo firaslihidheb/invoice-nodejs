@@ -10,7 +10,7 @@ const User = new user();
 module.exports =  (req, res, next) => {
 
     // if in any of the following urls, session status will not be checked
-    if(['/','/user/login','/user/register/all','/user/register','/user/register/update'].includes(req.url)){
+    if(['/','/user/login','/user/register','/uploadpdf'].includes(req.url)){
         next();
     }
     else if(req.headers.hasOwnProperty('authorization')){

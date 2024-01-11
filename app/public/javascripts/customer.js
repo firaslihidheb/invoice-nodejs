@@ -111,10 +111,38 @@ $(document).ready(function () {
     });
 
     $(document).on('click', ".add_new_customer", function () {
-        $('.add-customer-form').show();
         $('.remove_new_customer').show();
         $('.add_new_customer').hide();
-    })
+    
+        // Check if the table exists
+        var tableExists = $.fn.DataTable.isDataTable('#customers-table');
+        
+        var highestClientNumber = tableExists ? getHighestClientNumber() + 1 : 1000;
+        console.log(highestClientNumber);
+    
+        $('.add-customer-form').find('input[name="client_number"]').val(highestClientNumber);
+        $('.add-customer-form').show();
+    });
+    function getHighestClientNumber() {
+        var table = $('#customers-table').DataTable();
+    
+        // Get all client numbers without sorting
+        var clientNumbers = table.column(1).data();
+    
+        console.log('Client Numbers:', clientNumbers.toArray());
+        console.log('Data Type:', typeof clientNumbers.toArray());
+    
+        // Find the maximum client number
+        var maxClientNumber = Math.max.apply(null, clientNumbers.toArray());
+    
+        console.log('Max Client Number:', maxClientNumber);
+    
+        return maxClientNumber;
+    }
+    
+    
+    
+    
 
     $(document).on('click', ".remove_new_customer", function () {
         $('.add-customer-form').hide();

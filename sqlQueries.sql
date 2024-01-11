@@ -31,22 +31,30 @@ CREATE TABLE `user` (
                         CONSTRAINT `fk_type_id` FOREIGN KEY (`type_id`) REFERENCES `user_type` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
-CREATE TABLE `product` (
-                           `id` int(11) NOT NULL AUTO_INCREMENT,
-                           `name` varchar(45) NOT NULL,
-                           `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                           `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                           `sku` varchar(99) NOT NULL COMMENT 'Stock Keeping Unit Number',
-                           `label` varchar(145) DEFAULT NULL,
-                           `rate` decimal(6,2) NOT NULL,
-                           `description` varchar(255) DEFAULT NULL,
-                           `user_id` int(11) DEFAULT NULL,
-                           PRIMARY KEY (`id`),
-                           UNIQUE KEY `uq_sku_user_id` (`sku`),
-                           KEY `idx_sku` (`sku`),
-                           KEY `fk_user_id_idx` (`user_id`),
-                           CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `contract` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `customer_id` int(11) NOT NULL,
+    `collaborateur_id` int(11) NOT NULL,
+    `start_date` date NOT NULL,
+    `end_date` date NOT NULL,
+    `numero_contrat` int(11) NOT NULL,
+    `client_order_number` int(11) NOT NULL,
+
+    `tjm` decimal(6,2) NOT NULL,
+    `created_by_user_id` int(11) NOT NULL,
+    `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_numero_contrat` (`numero_contrat`),
+    KEY `fk_customer_contract_idx` (`customer_id`),
+    KEY `fk_collaborateur_idx` (`collaborateur_id`),
+    KEY `fk_created_by_user_idx` (`created_by_user_id`),
+    CONSTRAINT `fk_customer_contract` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT `fk_collaborateur` FOREIGN KEY (`collaborateur_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT `fk_created_by_user` FOREIGN KEY (`created_by_user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 
 
 CREATE TABLE `customer` (

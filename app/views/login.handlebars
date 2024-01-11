@@ -43,11 +43,11 @@
                             <form id="login-form" style="display: block;">
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input type="text" name="username" minlength="10" id="username" tabindex="1" class="form-control" placeholder="Username (Mobile)" required>
+                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Nom d'utilisateur" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Password</label>
-                                    <input type="password" required  name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                    <input type="password" autocomplete="current-passowrd" required  name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
                                 </div>
                                 <div class="login_alert_div alert" style="display: none"></div>
                                 <div class="form-group">
@@ -76,12 +76,7 @@
         $('#login-form').html('<h1 style="margin: 55px;text-align: center">Browser not supported</h1>')
     }
 
-    $(document).on("keydown", "#username", function(event){
-        if (event.keyCode == 8 || event.keyCode == 37 || event.keyCode == 39 || (event.keyCode >= 48 &&  event.keyCode <= 58))
-            return true;
-        else
-            return false;
-    })
+    
 
     $(document).on("submit", "#login-form", function(){
         const username = $(this).find('input[name="username"]').val().trim();

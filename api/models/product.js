@@ -21,59 +21,69 @@ class Product{
      */
     addProduct(req, res){
         try {
-            assert(req.body.name,"Name is required");
-            assert(req.body.description,"Description is required");
-            assert(req.body.rate,"Rate is required");
-            assert(req.body.sku,"SKU/Unique Code is required");
-            assert(req.user_id, 'User not logged in');
+            assert(req.body.customer_id, "Customer ID is required");
+            assert(req.body.collaborateur_id, "Collaborateur ID is required");
+            assert(req.body.start_date, "Start date is required");
+            assert(req.body.end_date, "End date is required");
+            assert(req.body.numero_contrat, "Contract number is required");
+            assert(req.body.tjm, "TJM (taux journalier de la prestation) is required");
+            assert(req.body.client_order_number, "Numéro de commande Client is required");
+            
+    
+            let customer_id = req.body.customer_id;
+            let collaborateur_id = req.body.collaborateur_id;
+            let start_date = req.body.start_date;
+            let end_date = req.body.end_date;
+            let numero_contrat = req.body.numero_contrat;
+            let tjm = req.body.tjm;
+            let created_by_user_id = req.user_id;
+            
+            let client_order_number = req.body.client_order_number;
+            
 
-            let name = req.body.name;
-            let description = req.body.description;
-            let rate  = req.body.rate ;
-            let sku = req.body.sku;
-            let label = req.body.hasOwnProperty('label') ? req.body.label : "";
-
-            connectionPool.query(`INSERT into product(name,label,description,rate ,sku,user_id) 
-            VALUES(?,?,?,?,?,?)`, [name,label,description,rate,sku,req.user_id], function(error, result, fields) {
-                if (error) {
-                    if(error.code==='ER_DUP_ENTRY'){
+            
+    
+            connectionPool.query(
+                `INSERT INTO contract (customer_id, collaborateur_id, start_date,end_date, numero_contrat, tjm, created_by_user_id,client_order_number) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [customer_id, collaborateur_id, start_date, end_date, numero_contrat, tjm, created_by_user_id, client_order_number],
+                function (error, result, fields) {
+                    if (error) {
+                        if (error.code === "ER_DUP_ENTRY") {
+                            res.status(422).send({
+                                status: "error",
+                                message: "Contract with this contract number already exists"
+                            });
+                        } else {
+                            res.status(500).send({
+                                status: "error",
+                                code: error.code,
+                                message: error.sqlMessage
+                            });
+                        }
+                    } else if (result.insertId > 0) {
+                        res.status(200).send({
+                            status: "success",
+                            data: "",
+                            message: "Contract added successfully"
+                        });
+                    } else {
                         res.status(422).send({
                             status: "error",
-                            message: "Product with this SKU already exists"
+                            message: "Contract with this contract number already exists"
                         });
                     }
-                    else{
-                        res.status(500).send({
-                            status: "error",
-                            code: error.code,
-                            message: error.sqlMessage
-                        });
-                    }
-                } else if(result.insertId > 0){
-                    res.status(200).send({
-                        status: "success",
-                        data: "",
-                        message: "Product added successfully"
-                    });
                 }
-                else{
-                    res.status(422).send({
-                        status: "error",
-                        message: "Product with this SKU already exists"
-                    });
-                }
-            });
-        }
-        catch (e) {
-            if(e instanceof AssertionError){
-                console.log(req.url,"-",__function,"-","AssertionError : ",e.message);
+            );
+        } catch (e) {
+            if (e instanceof AssertionError) {
+                console.log(req.url, "-", __function, "-", "AssertionError : ", e.message);
                 res.status(500).send({
                     status: "AssertionError",
                     message: e.message
                 });
-            }
-            else{
-                console.log(req.url,"-",__function,"-","Error : ",e.message);
+            } else {
+                console.log(req.url, "-", __function, "-", "Error : ", e.message);
                 res.status(500).send({
                     status: "error",
                     message: e.message
@@ -81,7 +91,7 @@ class Product{
             }
         }
     }
-
+    
     /**
      * This function returns all the products of a user
      * @param req request object
@@ -93,7 +103,7 @@ class Product{
         try {
             assert(req.user_id, 'User Id not found');
 
-            connectionPool.query(`SELECT * FROM product where user_id = ?`, req.user_id,
+            connectionPool.query(`SELECT * FROM contract where created_by_user_id = ?`, req.user_id,
                 function(error, result, fields) {
                     if (error) {
                         res.status(500).send({
@@ -141,10 +151,10 @@ class Product{
      */
     getProduct(req, res){
         try {
-            assert(req.params.id, 'Product Id not provided');
+            assert(req.params.id, 'fu uId not provided');
             assert(req.user_id, 'User not logged in');
 
-            connectionPool.query(`SELECT * FROM product where id = ? and user_id = ?`,
+            connectionPool.query(`SELECT * FROM contract where id = ? and created_by_user_id = ?`,
                 [req.params.id, req.user_id], function(error, result, fields) {
                     if (error) {
                         res.status(500).send({

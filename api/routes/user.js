@@ -9,6 +9,9 @@ router.post('/login', function(req, res) {
 router.get('/logout', function(req, res) {
     User.logoutUser(req,res);
 });
+router.get('/:user_id', function(req, res) {
+    User.getUser(req,res);
+});
 
 router.post('/register', function(req, res) {
     User.addUser(req,res);
